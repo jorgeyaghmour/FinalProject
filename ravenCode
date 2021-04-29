@@ -1,0 +1,74 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
+public class assignment1 {
+
+	public static void main(String[] args) throws Exception {
+
+		//Path is used to find the Raven Poem from our txt created in a notepad
+		Path path = Paths.get(System.getProperty("user.dir")).resolve("raven.txt");
+
+		//buffer to read the txt file (poem)
+		BufferedReader reader = new BufferedReader(new FileReader(path.toFile()));
+
+		//Map to record each word, map can only take objects string as the word.
+		Map<String, Integer> freq = new HashMap<>();
+
+		//starting to get every line of the poem, with a while loop and if statement
+		String line = reader.readLine(); //non null char will show a line
+		while (line != null) {
+
+			if (!line.trim().contentEquals("")) { //remove all the white space. 
+				String[] words = line.split(" ");
+
+				//
+				for (String word : words) {
+					if (word == null || word.trim().equals("")) { //do not process empty words 
+						continue;
+					}
+					//This is to process lower case and erase the ","
+					String processed = word.toLowerCase();
+					processed = processed.replace(",", "");
+					
+					//if find a word, it will be increased by 1
+					if (freq.containsKey(processed)) {
+						freq.put(processed, freq.get(processed) + 1);
+					} else {
+						freq.put(processed, 1);
+					}
+
+				}
+			}
+			line = reader.readLine(); // process all the lines
+		}
+
+		System.out.println(freq);
+
+		//this is an array to sort the values from most frequent word to least frequent
+		
+		Collection<Integer> values = freq.values();
+		ArrayList<Integer> list = new ArrayList<Integer>(values);
+		Collections.sort(list, Collections.reverseOrder());
+		for (int i = 0; i < 20; i++)
+			System.out.println(list.get(i));
+
+		//this is to find the most frequent word in the poem
+		int mostUsed = 0;
+		String theWord = null;
+		for (String word : freq.keySet()) {
+			Integer theVal = freq.get(word);
+			if (theVal > mostUsed) {
+				mostUsed = theVal;
+				theWord = word;
+			}
+		}
+		System.out.printf("the most frequenly word is '%s', %d times", theWord, mostUsed);
+	}
+}
